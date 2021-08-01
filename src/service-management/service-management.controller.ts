@@ -1,5 +1,7 @@
-import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, NotFoundException, Param, Post, Put } from '@nestjs/common';
 import { Pageable } from 'nestjs-pager';
+import { ApiErrorImpl } from 'src/error/exceptionFilter';
+import { DeleteResult } from 'typeorm';
 import { ServiceManagementService } from './service-management.service';
 import { Service } from './service.entity';
 
@@ -9,10 +11,6 @@ export class ServiceManagementController {
 
     @Post()
     public createService(@Body() service: Service) {
-        // TODO: Create services -> Return serviceSecret, serviceClientId for authentication -> Has to be defined in config client (hard-coded or per Env variable)
-        // The Body should take in an interface of Service and returns an interface containing the above properties
-        service.clientSecret = undefined;
-        service.clientId = undefined;
         return this.serviceManagementService.createService(service);
     }
 
@@ -22,20 +20,20 @@ export class ServiceManagementController {
     }
 
     @Delete(":serviceId")
-    public deleteService(@Param() serviceId: string) {
-        // TODO: Delete service
+    public deleteService(@Param('serviceId') serviceId: string): Promise<DeleteResult> {
+        return this.serviceManagementService.deleteService(serviceId);
     }
     
     @Get(":serviceId")
-    public getService(@Param() serviceId: string) {
-        // TODO: Return the service by its id
+    public async getService(@Param('serviceId') serviceId: string): Promise<Service> {   
+        const service: Service = await this.serviceManagementService.findById(serviceId);
+        if(!service) throw new NotFoundException("Service not found");
+        return service;
     }
 
     @Get()
     public listServices(@Pageable() pageable: Pageable) {
         console.log(pageable);
         return this.serviceManagementService.listAll(pageable);
-        
-        // TODO: Return a list of services, maybe check if Nest.js supports pagination?
     }
 }
