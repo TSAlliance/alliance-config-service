@@ -1,12 +1,14 @@
-import { Body, Controller, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param } from '@nestjs/common';
+import { Migration } from './migration.model';
+import { MigrationService } from './migrations.service';
 
-@Controller('migrations')
+@Controller('migrate')
 export class MigrationsController {
+    constructor(private migrationService: MigrationService){}
 
-    @Post(":serviceId")
-    public initiateMigration(@Param() serviceId: string, @Body() migration: any) {
-        console.log(serviceId);
-        console.log(migration);
+    @Get(":serviceId")
+    public initiateMigration(@Param("serviceId") serviceId: string, @Body() migration: Migration) {
+        return this.migrationService.migrate(serviceId, migration);
     }
 
 }

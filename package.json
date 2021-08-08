@@ -27,6 +27,7 @@
     "@nestjs/platform-express": "^8.0.0",
     "@nestjs/typeorm": "^8.0.1",
     "@tsalliance/sdk": "^1.0.1",
+    "deepmerge": "^4.2.2",
     "mysql2": "^2.2.5",
     "nestjs-pager": "^1.0.1",
     "reflect-metadata": "^0.1.13",

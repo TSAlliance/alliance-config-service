@@ -1,6 +1,5 @@
 import { Body, Controller, Delete, Get, NotFoundException, Param, Post, Put } from '@nestjs/common';
 import { Pageable } from 'nestjs-pager';
-import { ApiErrorImpl } from 'src/error/exceptionFilter';
 import { DeleteResult } from 'typeorm';
 import { ServiceManagementService } from './service-management.service';
 import { Service } from './service.entity';
@@ -14,9 +13,9 @@ export class ServiceManagementController {
         return this.serviceManagementService.createService(service);
     }
 
-    @Put()
-    public updateService(@Body() service: Service) {
-        // TODO
+    @Put(":serviceId")
+    public updateService(@Param('serviceId') serviceId: string, @Body() service: Service) {
+        return this.serviceManagementService.updateService(serviceId, service);
     }
 
     @Delete(":serviceId")
@@ -33,7 +32,11 @@ export class ServiceManagementController {
 
     @Get()
     public listServices(@Pageable() pageable: Pageable) {
-        console.log(pageable);
         return this.serviceManagementService.listAll(pageable);
+    }
+
+    @Get("/regenerate/:serviceId")
+    public async regenerateCredentials(@Param('serviceId') serviceId: string): Promise<Service> {   
+        return this.serviceManagementService.regenerateCredentials(serviceId);
     }
 }
