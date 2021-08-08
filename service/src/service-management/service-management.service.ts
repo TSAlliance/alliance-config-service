@@ -22,17 +22,21 @@ export class ServiceManagementService {
     // per request scope
 
     public async createService(service: Service): Promise<Service> {
-        service.clientSecret = undefined;
-        service.clientId = undefined;
-
         this.validator.text("title", service.title).alphaNum().minLen(3).maxLen(32).required().check();
         this.validator.throwErrors();
 
-        return this.serviceRepository.save(service);
+        const s = new Service();
+        s.title = service.title;
+
+        return this.serviceRepository.save(s);
     }
 
     public async findById(id: string): Promise<Service> {
         return this.serviceRepository.findOne({ id });
+    }
+
+    public async findByIdWithRelations(id: string): Promise<Service> {
+        return this.serviceRepository.findOne({ id }, { relations: ["config"] });
     }
 
     public async listAll(pageable: Pageable): Promise<Page<Service>> {

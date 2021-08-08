@@ -6,9 +6,9 @@ import { MigrationService } from './migrations.service';
 export class MigrationsController {
     constructor(private migrationService: MigrationService){}
 
-    @Get(":serviceId")
-    public initiateMigration(@Param("serviceId") serviceId: string, @Body() migration: Migration) {
-        return this.migrationService.migrate(serviceId, migration);
+    @Get(":serviceId/:configId")
+    public initiateMigration(@Param("serviceId") serviceId: string, @Param("configId") configId: string, @Body() migration: Migration) {
+        return this.migrationService.migrate(serviceId, configId, migration);
     }
 
 }

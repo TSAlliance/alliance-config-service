@@ -1,32 +1,32 @@
-import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Get, NotFoundException, Param, Post, Put } from '@nestjs/common';
 import { Pageable } from 'nestjs-pager';
 import { ConfigManagementService } from './config-management.service';
-import { Config } from './config.entity';
+import { Config, ConfigBody } from './config.entity';
 
-@Controller('configs')
+@Controller()
 export class ConfigManagementController {
     constructor(private configService: ConfigManagementService) {}
 
     @Get(":serviceId")
-    public async getConfig(@Param("serviceId") serviceId: string) {
-        const config: Config = await this.configService.findConfigByServiceId(serviceId);
-        console.log(config.service)
+    public async listConfigsOfService(@Param("serviceId") serviceId: string, @Pageable() pageable: Pageable) {
+        return await this.configService.listAllOfService(serviceId, pageable);
+    }
+
+    @Get(":serviceId/:configId")
+    public async getConfig(@Param("serviceId") serviceId: string, @Param("configId") configId: string) {
+        const config: Config = await this.configService.findConfigByServiceAndConfigId(serviceId, configId);
+        if(!config) throw new NotFoundException();
         return config;
     }
 
-    @Get()
-    public listAll(@Pageable() pageable: Pageable) {
-        return this.configService.listAll(pageable);
-    }
-
     @Post(":serviceId")
-    public setConfig(@Param("serviceId") serviceId: string, @Body() config: Record<string, any>) {
+    public registerConfig(@Param("serviceId") serviceId: string, @Body() config: ConfigBody) {
         return this.configService.setConfig(serviceId, config);
     }
 
-    @Put(":serviceId")
-    public updateConfig(@Param("serviceId") serviceId: string, @Body() config: Record<string, any>) {
-        return this.configService.updateConfig(serviceId, config);
+    @Put(":serviceId/:configId")
+    public updateConfig(@Param("serviceId") serviceId: string, @Param("configId") configId: string, @Body() config: ConfigBody) {
+        return this.configService.updateConfig(serviceId, configId, config);
     }
 
 }

@@ -10,13 +10,13 @@ const deepmerge = require('deepmerge')
 export class MigrationService {
     constructor(private configService: ConfigManagementService){}
 
-    public async migrate(serviceId: string, migration: Migration): Promise<Config> {       
-        const config = await this.configService.findConfigByServiceId(serviceId);
+    public async migrate(serviceId: string, configId: string, migration: Migration): Promise<Config> {       
+        const config = await this.configService.findConfigByServiceAndConfigId(serviceId, configId);
         if(!config) throw new NotFoundException();    
 
-        config.scheme = deepmerge(config.scheme, this.processAddMigration(migration))
-        config.scheme = this.processDeleteMigration(config, migration);
-        config.scheme = this.processUpdateMigration(config, migration);
+        config.schema = deepmerge(config.schema, this.processAddMigration(migration))
+        config.schema = this.processDeleteMigration(config, migration);
+        config.schema = this.processUpdateMigration(config, migration);
 
         config.version++;
 
@@ -63,12 +63,12 @@ export class MigrationService {
 
         for(const keys of paths) {
             const prop = keys.pop();
-            const parent = keys.reduce((obj, key) => obj[key], config.scheme);
+            const parent = keys.reduce((obj, key) => obj[key], config.schema);
 
             if(parent && parent[prop]) delete parent[prop];
         }
 
-        return config.scheme;
+        return config.schema;
     }
 
     private processUpdateMigration(config: Config, migration: Migration): Record<string, any> {
@@ -88,7 +88,7 @@ export class MigrationService {
             const action = actions.pop();
             const value = vals.pop();
 
-            let tmp = config.scheme;
+            let tmp = config.schema;
             while(keys.length > 0) {
                 tmp = tmp[keys.pop()];
             }
@@ -107,6 +107,6 @@ export class MigrationService {
             }
         }        
 
-        return config.scheme;
+        return config.schema;
     }
 }
