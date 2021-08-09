@@ -1,8 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { Validator } from '@tsalliance/rest';
 import { Page, Pageable } from 'nestjs-pager';
 import { ServiceManagementService } from 'src/service-management/service-management.service';
 import { Service } from 'src/service-management/service.entity';
-import { Validator } from 'src/validator/validator';
 import ConfigRepository from './config-management.repository';
 import { Config, ConfigBody } from './config.entity';
 

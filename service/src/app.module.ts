@@ -5,11 +5,11 @@ import { ServiceManagementService } from './service-management/service-managemen
 import { TypeOrmModule } from '@nestjs/typeorm';
 import ServiceRepository from './service-management/service.repository';
 import { ConfigModule } from '@nestjs/config';
-import { Validator } from './validator/validator';
 import { ConfigManagementController } from './config-management/config-management.controller';
 import { ConfigManagementService } from './config-management/config-management.service';
 import ConfigRepository from './config-management/config-management.repository';
 import { MigrationService } from './migrations/migrations.service';
+import { Validator } from "@tsalliance/rest"
 
 @Module({
   imports: [
